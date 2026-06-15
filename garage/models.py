@@ -2,91 +2,87 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
+class Sede(models.Model):
+    nome = models.CharField(max_length=100)
+    indirizzo = models.CharField(max_length=200)
+    citta = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=20, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Sede"
+        verbose_name_plural = "Sedi"
+
+    def __str__(self):
+        return f"{self.nome} - {self.citta}"
+
+
+class Fornitore(models.Model):
+    nome = models.CharField(max_length=100)
+    partita_iva = models.CharField(max_length=20, unique=True)
+    telefono = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Fornitore"
+        verbose_name_plural = "Fornitori"
+
+    def __str__(self):
+        return self.nome
+
+
 class Utente(models.Model):
-    id_utente = models.AutoField(primary_key=True)
+    RUOLI = [
+        ("cliente", "Cliente"),
+        ("venditore", "Venditore"),
+        ("meccanico", "Meccanico"),
+    ]
+
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+    password = models.CharField(max_length=200)
+
+    nome = models.CharField(max_length=100)
+    cognome = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=20, blank=True, null=True)
+
+    codice_fiscale = models.CharField(max_length=16, unique=True, blank=True, null=True)
+    ruolo = models.CharField(max_length=20, choices=RUOLI)
+
+    sede = models.ForeignKey(Sede, on_delete=models.SET_NULL, blank=True, null=True)
 
     class Meta:
         verbose_name = "Utente"
         verbose_name_plural = "Utenti"
 
     def __str__(self):
-        return self.email
-
-
-class Cliente(models.Model):
-    utente = models.OneToOneField(
-        Utente,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        db_column="id_utente"
-    )
-    nome = models.CharField(max_length=50)
-    cognome = models.CharField(max_length=50)
-    telefono = models.CharField(max_length=20)
-    codice_fiscale = models.CharField(max_length=16, unique=True)
-
-    class Meta:
-        verbose_name = "Cliente"
-        verbose_name_plural = "Clienti"
-
-    def __str__(self):
-        return f"{self.nome} {self.cognome}"
-
-
-class Dipendente(models.Model):
-    RUOLO_CHOICES = [
-        ("venditore", "Venditore"),
-        ("meccanico", "Meccanico"),
-    ]
-
-    utente = models.OneToOneField(
-        Utente,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        db_column="id_utente"
-    )
-    nome = models.CharField(max_length=50)
-    cognome = models.CharField(max_length=50)
-    telefono = models.CharField(max_length=20)
-    ruolo = models.CharField(max_length=20, choices=RUOLO_CHOICES)
-
-    class Meta:
-        verbose_name = "Dipendente"
-        verbose_name_plural = "Dipendenti"
-
-    def __str__(self):
-        return f"{self.nome} {self.cognome} - {self.ruolo}"
+        return f"{self.nome} {self.cognome} ({self.ruolo})"
 
 
 class Auto(models.Model):
-    TIPO_AUTO_CHOICES = [
+    TIPO_AUTO = [
         ("nuova", "Nuova"),
         ("usata", "Usata"),
     ]
 
-    STATO_CHOICES = [
+    STATO_AUTO = [
         ("disponibile", "Disponibile"),
         ("venduta", "Venduta"),
-        ("in_manutenzione", "In manutenzione"),
+        ("manutenzione", "In manutenzione"),
+        ("noleggiata", "Noleggiata"),
     ]
 
-    id_auto = models.AutoField(primary_key=True)
-    marca = models.CharField(max_length=50)
-    modello = models.CharField(max_length=50)
-    anno_immatricolazione = models.PositiveIntegerField()
-    chilometraggio = models.PositiveIntegerField(default=0)
-    alimentazione = models.CharField(max_length=30)
-    cambio = models.CharField(max_length=30)
-    colore = models.CharField(max_length=30)
-    prezzo = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        validators=[MinValueValidator(0.01)]
-    )
-    tipo_auto = models.CharField(max_length=20, choices=TIPO_AUTO_CHOICES)
-    stato = models.CharField(max_length=20, choices=STATO_CHOICES, default="disponibile")
+    marca = models.CharField(max_length=100)
+    modello = models.CharField(max_length=100)
+    anno = models.IntegerField()
+    chilometraggio = models.IntegerField(validators=[MinValueValidator(0)])
+    alimentazione = models.CharField(max_length=50)
+    cambio = models.CharField(max_length=50)
+    colore = models.CharField(max_length=50)
+    prezzo = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    tipo_auto = models.CharField(max_length=20, choices=TIPO_AUTO)
+    stato = models.CharField(max_length=20, choices=STATO_AUTO, default="disponibile")
+
+    sede = models.ForeignKey(Sede, on_delete=models.SET_NULL, blank=True, null=True)
+    fornitore = models.ForeignKey(Fornitore, on_delete=models.SET_NULL, blank=True, null=True)
 
     class Meta:
         verbose_name = "Auto"
@@ -96,87 +92,95 @@ class Auto(models.Model):
         return f"{self.marca} {self.modello}"
 
 
-class Recensione(models.Model):
-    id_recensione = models.AutoField(primary_key=True)
-    voto = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)]
-    )
-    commento = models.TextField()
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-    auto = models.ForeignKey(Auto, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "Recensione"
-        verbose_name_plural = "Recensioni"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["cliente", "auto"],
-                name="unique_recensione_cliente_auto"
-            )
-        ]
-
-    def __str__(self):
-        return f"Recensione {self.voto}/5 - {self.auto}"
-
-
-class Intervento(models.Model):
-    id_intervento = models.AutoField(primary_key=True)
-    data_intervento = models.DateField()
-    tipo_intervento = models.CharField(max_length=100)
-    costo = models.DecimalField(
-        max_digits=8,
-        decimal_places=2,
-        validators=[MinValueValidator(0)]
-    )
-    auto = models.ForeignKey(Auto, on_delete=models.CASCADE)
-    dipendente = models.ForeignKey(Dipendente, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "Intervento"
-        verbose_name_plural = "Interventi"
-
-    def __str__(self):
-        return f"{self.tipo_intervento} - {self.auto}"
-
-
 class TestDrive(models.Model):
-    STATO_CHOICES = [
+    STATO_TEST_DRIVE = [
         ("prenotato", "Prenotato"),
         ("effettuato", "Effettuato"),
         ("annullato", "Annullato"),
     ]
 
-    id_test_drive = models.AutoField(primary_key=True)
-    data_test_drive = models.DateField()
-    stato = models.CharField(max_length=20, choices=STATO_CHOICES, default="prenotato")
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(
+        Utente,
+        on_delete=models.CASCADE,
+        related_name="test_drive_cliente"
+    )
     auto = models.ForeignKey(Auto, on_delete=models.CASCADE)
-    dipendente = models.ForeignKey(Dipendente, on_delete=models.CASCADE)
+    venditore = models.ForeignKey(
+        Utente,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="test_drive_venditore"
+    )
+    data_test_drive = models.DateField()
+    stato = models.CharField(max_length=20, choices=STATO_TEST_DRIVE, default="prenotato")
 
     class Meta:
+        unique_together = ("cliente", "auto")
         verbose_name = "Test drive"
         verbose_name_plural = "Test drive"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["cliente", "auto"],
-                name="unique_testdrive_cliente_auto"
-            )
-        ]
 
     def __str__(self):
-        return f"Test drive {self.cliente} - {self.auto}"
+        return f"Test drive {self.auto} - {self.cliente}"
 
 
 class Vendita(models.Model):
-    id_vendita = models.AutoField(primary_key=True)
-    data_vendita = models.DateField()
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(
+        Utente,
+        on_delete=models.CASCADE,
+        related_name="vendite_cliente"
+    )
     auto = models.OneToOneField(Auto, on_delete=models.CASCADE)
-    dipendente = models.ForeignKey(Dipendente, on_delete=models.CASCADE)
+    venditore = models.ForeignKey(
+        Utente,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="vendite_venditore"
+    )
+    data_vendita = models.DateField()
+    prezzo_finale = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         verbose_name = "Vendita"
         verbose_name_plural = "Vendite"
 
     def __str__(self):
-        return f"Vendita {self.auto} a {self.cliente}"
+        return f"Vendita {self.auto} - {self.cliente}"
+
+
+class Intervento(models.Model):
+    auto = models.ForeignKey(Auto, on_delete=models.CASCADE)
+    meccanico = models.ForeignKey(
+        Utente,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="interventi_meccanico"
+    )
+    data_intervento = models.DateField()
+    tipo_intervento = models.CharField(max_length=100)
+    costo = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+
+    class Meta:
+        verbose_name = "Intervento"
+        verbose_name_plural = "Interventi"
+
+    def __str__(self):
+        return f"Intervento {self.auto} - {self.tipo_intervento}"
+
+
+class Recensione(models.Model):
+    cliente = models.ForeignKey(
+        Utente,
+        on_delete=models.CASCADE,
+        related_name="recensioni_cliente"
+    )
+    auto = models.ForeignKey(Auto, on_delete=models.CASCADE)
+    voto = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    commento = models.TextField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ("cliente", "auto")
+        verbose_name = "Recensione"
+        verbose_name_plural = "Recensioni"
+
+    def __str__(self):
+        return f"Recensione {self.auto} - voto {self.voto}"
