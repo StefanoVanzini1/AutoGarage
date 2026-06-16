@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .forms import RegistrazioneClienteForm, LoginForm
-from .models import Utente
+from .models import Utente, Auto
 
 
 def home(request):
@@ -54,4 +54,8 @@ def catalogo(request):
     if "utente_id" not in request.session:
         return redirect("login")
 
-    return render(request, "garage/catalogo.html")
+    auto_list = Auto.objects.all().order_by("marca", "modello")
+
+    return render(request, "garage/catalogo.html", {
+        "auto_list": auto_list
+    })

@@ -2,12 +2,44 @@
 
 {% block content %}
 
-<h2>Catalogo auto</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Catalogo Auto</h2>
 
-<p>Accesso effettuato correttamente.</p>
+    <a href="{% url 'logout' %}" class="btn btn-danger">
+        Logout
+    </a>
+</div>
 
-<a href="{% url 'logout' %}" class="btn btn-danger">
-    Logout
-</a>
+<div class="row">
+
+    {% for auto in auto_list %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ auto.marca }} {{ auto.modello }}
+                    </h5>
+
+                    <p class="card-text">
+                        <strong>Anno:</strong> {{ auto.anno }} <br>
+                        <strong>Chilometraggio:</strong> {{ auto.chilometraggio }} km <br>
+                        <strong>Prezzo:</strong> € {{ auto.prezzo }} <br>
+                        <strong>Stato:</strong> {{ auto.get_stato_display }} <br>
+                        <strong>Sede:</strong> {{ auto.sede.nome }}
+                    </p>
+
+                    <span class="badge bg-secondary">
+                        {{ auto.get_tipo_auto_display }}
+                    </span>
+                </div>
+
+            </div>
+        </div>
+    {% empty %}
+        <p>Nessuna auto presente nel catalogo.</p>
+    {% endfor %}
+
+</div>
 
 {% endblock %}
