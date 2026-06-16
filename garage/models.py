@@ -3,24 +3,26 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Sede(models.Model):
-    nome = models.CharField(max_length=100)
+    nome = models.CharField(max_length=100, unique=True)
     indirizzo = models.CharField(max_length=200)
     citta = models.CharField(max_length=100)
-    telefono = models.CharField(max_length=20, blank=True, null=True)
+    telefono = models.CharField(max_length=20)
+    email = models.EmailField(unique=True)
 
     class Meta:
         verbose_name = "Sede"
         verbose_name_plural = "Sedi"
 
     def __str__(self):
-        return f"{self.nome} - {self.citta}"
+        return self.nome
 
 
 class Fornitore(models.Model):
     nome = models.CharField(max_length=100)
     partita_iva = models.CharField(max_length=20, unique=True)
-    telefono = models.CharField(max_length=20, blank=True, null=True)
-    email = models.EmailField(blank=True, null=True)
+    indirizzo = models.CharField(max_length=200)
+    telefono = models.CharField(max_length=20)
+    email = models.EmailField(unique=True)
 
     class Meta:
         verbose_name = "Fornitore"
@@ -37,17 +39,20 @@ class Utente(models.Model):
         ("meccanico", "Meccanico"),
     ]
 
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=200)
-
     nome = models.CharField(max_length=100)
     cognome = models.CharField(max_length=100)
-    telefono = models.CharField(max_length=20, blank=True, null=True)
-
-    codice_fiscale = models.CharField(max_length=16, unique=True, blank=True, null=True)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=200)
+    telefono = models.CharField(max_length=20)
     ruolo = models.CharField(max_length=20, choices=RUOLI)
-
-    sede = models.ForeignKey(Sede, on_delete=models.SET_NULL, blank=True, null=True)
+    codice_fiscale = models.CharField(max_length=16, unique=True, blank=True, null=True)
+    stipendio = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.01)],
+        blank=True,
+        null=True
+    )
 
     class Meta:
         verbose_name = "Utente"
@@ -66,7 +71,7 @@ class Auto(models.Model):
     STATO_AUTO = [
         ("disponibile", "Disponibile"),
         ("venduta", "Venduta"),
-        ("manutenzione", "In manutenzione"),
+        ("in_manutenzione", "In manutenzione"),
         ("noleggiata", "Noleggiata"),
     ]
 
@@ -77,45 +82,61 @@ class Auto(models.Model):
     alimentazione = models.CharField(max_length=50)
     cambio = models.CharField(max_length=50)
     colore = models.CharField(max_length=50)
-    prezzo = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    prezzo = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.01)])
     tipo_auto = models.CharField(max_length=20, choices=TIPO_AUTO)
     stato = models.CharField(max_length=20, choices=STATO_AUTO, default="disponibile")
-
-    sede = models.ForeignKey(Sede, on_delete=models.SET_NULL, blank=True, null=True)
-    fornitore = models.ForeignKey(Fornitore, on_delete=models.SET_NULL, blank=True, null=True)
+    sede = models.ForeignKey(Sede, on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = "Auto"
         verbose_name_plural = "Auto"
 
     def __str__(self):
-        return f"{self.marca} {self.modello}"
+        return f"{self.marca} {self.modello} - {self.anno}"
+
+
+class Recensione(models.Model):
+    cliente = models.ForeignKey(
+        Utente,
+        on_delete=models.CASCADE,
+        related_name="recensioni_cliente"
+    )
+    auto = models.ForeignKey(
+        Auto,
+        on_delete=models.CASCADE,
+        related_name="recensioni"
+    )
+    voto = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    commento = models.TextField()
+
+    class Meta:
+        unique_together = ("cliente", "auto")
+        verbose_name = "Recensione"
+        verbose_name_plural = "Recensioni"
+
+    def __str__(self):
+        return f"Recensione {self.auto} - voto {self.voto}"
 
 
 class TestDrive(models.Model):
-    STATO_TEST_DRIVE = [
-        ("prenotato", "Prenotato"),
-        ("effettuato", "Effettuato"),
-        ("annullato", "Annullato"),
-    ]
-
     cliente = models.ForeignKey(
         Utente,
         on_delete=models.CASCADE,
         related_name="test_drive_cliente"
     )
-    auto = models.ForeignKey(Auto, on_delete=models.CASCADE)
+    auto = models.ForeignKey(
+        Auto,
+        on_delete=models.CASCADE,
+        related_name="test_drive"
+    )
     venditore = models.ForeignKey(
         Utente,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.PROTECT,
         related_name="test_drive_venditore"
     )
     data_test_drive = models.DateField()
-    stato = models.CharField(max_length=20, choices=STATO_TEST_DRIVE, default="prenotato")
 
     class Meta:
-        unique_together = ("cliente", "auto")
         verbose_name = "Test drive"
         verbose_name_plural = "Test drive"
 
@@ -129,15 +150,17 @@ class Vendita(models.Model):
         on_delete=models.CASCADE,
         related_name="vendite_cliente"
     )
-    auto = models.OneToOneField(Auto, on_delete=models.CASCADE)
+    auto = models.OneToOneField(
+        Auto,
+        on_delete=models.PROTECT,
+        related_name="vendita"
+    )
     venditore = models.ForeignKey(
         Utente,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.PROTECT,
         related_name="vendite_venditore"
     )
     data_vendita = models.DateField()
-    prezzo_finale = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         verbose_name = "Vendita"
@@ -147,12 +170,44 @@ class Vendita(models.Model):
         return f"Vendita {self.auto} - {self.cliente}"
 
 
+class Noleggio(models.Model):
+    cliente = models.ForeignKey(
+        Utente,
+        on_delete=models.CASCADE,
+        related_name="noleggi_cliente"
+    )
+    auto = models.ForeignKey(
+        Auto,
+        on_delete=models.PROTECT,
+        related_name="noleggi"
+    )
+    venditore = models.ForeignKey(
+        Utente,
+        on_delete=models.PROTECT,
+        related_name="noleggi_venditore"
+    )
+    data_inizio = models.DateField()
+    data_fine = models.DateField()
+    costo_giornaliero = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.01)])
+    costo_totale = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.01)])
+
+    class Meta:
+        verbose_name = "Noleggio"
+        verbose_name_plural = "Noleggi"
+
+    def __str__(self):
+        return f"Noleggio {self.auto} - {self.cliente}"
+
+
 class Intervento(models.Model):
-    auto = models.ForeignKey(Auto, on_delete=models.CASCADE)
+    auto = models.ForeignKey(
+        Auto,
+        on_delete=models.CASCADE,
+        related_name="interventi"
+    )
     meccanico = models.ForeignKey(
         Utente,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.PROTECT,
         related_name="interventi_meccanico"
     )
     data_intervento = models.DateField()
@@ -167,20 +222,49 @@ class Intervento(models.Model):
         return f"Intervento {self.auto} - {self.tipo_intervento}"
 
 
-class Recensione(models.Model):
-    cliente = models.ForeignKey(
-        Utente,
-        on_delete=models.CASCADE,
-        related_name="recensioni_cliente"
+class Fornitura(models.Model):
+    fornitore = models.ForeignKey(
+        Fornitore,
+        on_delete=models.PROTECT,
+        related_name="forniture"
     )
-    auto = models.ForeignKey(Auto, on_delete=models.CASCADE)
-    voto = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    commento = models.TextField(blank=True, null=True)
+    auto = models.OneToOneField(
+        Auto,
+        on_delete=models.CASCADE,
+        related_name="fornitura"
+    )
+    sede = models.ForeignKey(
+        Sede,
+        on_delete=models.PROTECT,
+        related_name="forniture"
+    )
+    data_fornitura = models.DateField()
+    prezzo_acquisto = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.01)])
 
     class Meta:
-        unique_together = ("cliente", "auto")
-        verbose_name = "Recensione"
-        verbose_name_plural = "Recensioni"
+        verbose_name = "Fornitura"
+        verbose_name_plural = "Forniture"
 
     def __str__(self):
-        return f"Recensione {self.auto} - voto {self.voto}"
+        return f"Fornitura {self.auto} - {self.fornitore}"
+
+
+class Impiego(models.Model):
+    dipendente = models.ForeignKey(
+        Utente,
+        on_delete=models.CASCADE,
+        related_name="impieghi"
+    )
+    sede = models.ForeignKey(
+        Sede,
+        on_delete=models.CASCADE,
+        related_name="impieghi"
+    )
+
+    class Meta:
+        unique_together = ("dipendente", "sede")
+        verbose_name = "Impiego"
+        verbose_name_plural = "Impieghi"
+
+    def __str__(self):
+        return f"{self.dipendente} - {self.sede}"
