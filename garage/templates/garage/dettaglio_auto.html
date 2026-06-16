@@ -36,6 +36,31 @@
             Prenota test drive
         </a>
     {% endif %}
+
 </div>
+
+<hr class="my-4">
+
+<h3>Recensioni</h3>
+
+{% for recensione in recensioni %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">
+                Voto: {{ recensione.voto }}/5
+            </h5>
+
+            <p class="card-text">
+                {{ recensione.commento }}
+            </p>
+
+            <p class="text-muted mb-0">
+                Scritta da {{ recensione.cliente.nome }} {{ recensione.cliente.cognome }}
+            </p>
+        </div>
+    </div>
+{% empty %}
+    <p>Nessuna recensione presente per questa auto.</p>
+{% endfor %}
 
 {% endblock %}

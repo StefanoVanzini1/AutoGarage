@@ -67,6 +67,7 @@ def dettaglio_auto(request, auto_id):
         return redirect("login")
 
     auto = get_object_or_404(Auto, id=auto_id)
+    recensioni = auto.recensioni.all()
     messaggio = request.session.pop("messaggio", None)
 
     return render(
@@ -74,7 +75,8 @@ def dettaglio_auto(request, auto_id):
         "garage/dettaglio_auto.html",
         {
             "auto": auto,
-            "messaggio": messaggio
+            "messaggio": messaggio,
+            "recensioni": recensioni
         }
     )
 
@@ -85,7 +87,6 @@ def prenota_test_drive(request, auto_id):
 
     auto = get_object_or_404(Auto, id=auto_id)
     cliente = get_object_or_404(Utente, id=request.session["utente_id"])
-
     venditore = Utente.objects.filter(ruolo="venditore").first()
 
     if request.method == "POST":
