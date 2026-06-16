@@ -1,0 +1,44 @@
+{% extends 'garage/base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Dashboard Meccanico</h2>
+
+<div class="card">
+    <div class="card-body">
+
+        {% for intervento in interventi %}
+
+            <div class="border-bottom mb-3 pb-3">
+
+                <h5>
+                    {{ intervento.auto.marca }} {{ intervento.auto.modello }}
+                </h5>
+
+                <p>
+                    <strong>Tipo intervento:</strong>
+                    {{ intervento.tipo_intervento }}
+                </p>
+
+                <p>
+                    <strong>Data:</strong>
+                    {{ intervento.data_intervento }}
+                </p>
+
+                <p>
+                    <strong>Costo:</strong>
+                    € {{ intervento.costo }}
+                </p>
+
+            </div>
+
+        {% empty %}
+
+            <p>Nessun intervento assegnato.</p>
+
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RegistrazioneClienteForm, LoginForm, TestDriveForm
-from .models import Utente, Auto, TestDrive
+from .models import Utente, Auto, TestDrive, Intervento
 
 
 def home(request):
@@ -36,7 +36,14 @@ def login_view(request):
                 request.session["utente_nome"] = utente.nome
                 request.session["utente_ruolo"] = utente.ruolo
 
-                return redirect("catalogo")
+                if utente.ruolo == "cliente":
+                    return redirect("catalogo")
+
+                if utente.ruolo == "venditore":
+                    return redirect("dashboard_venditore")
+
+                if utente.ruolo == "meccanico":
+                    return redirect("dashboard_meccanico")
 
             except Utente.DoesNotExist:
                 errore = "Email o password non corrette."
@@ -109,3 +116,53 @@ def prenota_test_drive(request, auto_id):
         "form": form,
         "auto": auto
     })
+
+
+def dashboard_venditore(request):
+    if "utente_id" not in request.session:
+        return redirect("login")
+
+    if request.session.get("utente_ruolo") != "venditore":
+        return redirect("catalogo")
+
+    venditore = get_object_or_404(
+        Utente,
+        id=request.session["utente_id"]
+    )
+
+    test_drive = TestDrive.objects.filter(
+        venditore=venditore
+    ).order_by("-data_test_drive")
+
+    return render(
+        request,
+        "garage/dashboard_venditore.html",
+        {
+            "test_drive": test_drive
+        }
+    )
+
+
+def dashboard_meccanico(request):
+    if "utente_id" not in request.session:
+        return redirect("login")
+
+    if request.session.get("utente_ruolo") != "meccanico":
+        return redirect("catalogo")
+
+    meccanico = get_object_or_404(
+        Utente,
+        id=request.session["utente_id"]
+    )
+
+    interventi = Intervento.objects.filter(
+        meccanico=meccanico
+    ).order_by("-data_intervento")
+
+    return render(
+        request,
+        "garage/dashboard_meccanico.html",
+        {
+            "interventi": interventi
+        }
+    )
