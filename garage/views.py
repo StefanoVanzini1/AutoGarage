@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RegistrazioneClienteForm, LoginForm
 from .models import Utente, Auto
 
@@ -59,3 +59,15 @@ def catalogo(request):
     return render(request, "garage/catalogo.html", {
         "auto_list": auto_list
     })
+
+def dettaglio_auto(request, auto_id):
+    if "utente_id" not in request.session:
+        return redirect("login")
+
+    auto = get_object_or_404(Auto, id=auto_id)
+
+    return render(
+        request,
+        "garage/dettaglio_auto.html",
+        {"auto": auto}
+    )

@@ -29,9 +29,22 @@
                         <strong>Sede:</strong> {{ auto.sede.nome }}
                     </p>
 
-                    <span class="badge bg-secondary">
-                        {{ auto.get_tipo_auto_display }}
-                    </span>
+                    {% if auto.tipo_auto == "nuova" %}
+                        <span class="badge bg-success">
+                            {{ auto.get_tipo_auto_display }}
+                        </span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">
+                            {{ auto.get_tipo_auto_display }}
+                        </span>
+                    {% endif %}
+
+                    <br>
+
+                    <a href="{% url 'dettaglio_auto' auto.id %}" class="btn btn-primary mt-3">
+                        Dettagli
+                    </a>
+
                 </div>
 
             </div>

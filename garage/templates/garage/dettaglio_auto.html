@@ -1,0 +1,29 @@
+{% extends 'garage/base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    {{ auto.marca }} {{ auto.modello }}
+</h2>
+
+<div class="card">
+    <div class="card-body">
+        <p><strong>Anno:</strong> {{ auto.anno }}</p>
+        <p><strong>Chilometraggio:</strong> {{ auto.chilometraggio }} km</p>
+        <p><strong>Alimentazione:</strong> {{ auto.alimentazione }}</p>
+        <p><strong>Cambio:</strong> {{ auto.cambio }}</p>
+        <p><strong>Colore:</strong> {{ auto.colore }}</p>
+        <p><strong>Prezzo:</strong> € {{ auto.prezzo }}</p>
+        <p><strong>Tipo:</strong> {{ auto.get_tipo_auto_display }}</p>
+        <p><strong>Stato:</strong> {{ auto.get_stato_display }}</p>
+        <p><strong>Sede:</strong> {{ auto.sede.nome }}</p>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'catalogo' %}" class="btn btn-secondary">
+        Torna al catalogo
+    </a>
+</div>
+
+{% endblock %}

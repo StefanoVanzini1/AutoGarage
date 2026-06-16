@@ -7,4 +7,5 @@ urlpatterns = [
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
     path("catalogo/", views.catalogo, name="catalogo"),
+    path("catalogo/<int:auto_id>/", views.dettaglio_auto, name="dettaglio_auto"),
 ]
