@@ -6,6 +6,12 @@
     {{ auto.marca }} {{ auto.modello }}
 </h2>
 
+{% if messaggio %}
+    <div class="alert alert-success">
+        {{ messaggio }}
+    </div>
+{% endif %}
+
 <div class="card">
     <div class="card-body">
         <p><strong>Anno:</strong> {{ auto.anno }}</p>
@@ -24,6 +30,12 @@
     <a href="{% url 'catalogo' %}" class="btn btn-secondary">
         Torna al catalogo
     </a>
+
+    {% if auto.stato == "disponibile" %}
+        <a href="{% url 'prenota_test_drive' auto.id %}" class="btn btn-success">
+            Prenota test drive
+        </a>
+    {% endif %}
 </div>
 
 {% endblock %}

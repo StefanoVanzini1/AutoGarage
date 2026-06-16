@@ -1,0 +1,34 @@
+{% extends 'garage/base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Prenota test drive
+</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5>{{ auto.marca }} {{ auto.modello }}</h5>
+        <p>
+            <strong>Anno:</strong> {{ auto.anno }} <br>
+            <strong>Prezzo:</strong> € {{ auto.prezzo }} <br>
+            <strong>Sede:</strong> {{ auto.sede.nome }}
+        </p>
+    </div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-success">
+        Conferma prenotazione
+    </button>
+
+    <a href="{% url 'dettaglio_auto' auto.id %}" class="btn btn-secondary">
+        Annulla
+    </a>
+</form>
+
+{% endblock %}

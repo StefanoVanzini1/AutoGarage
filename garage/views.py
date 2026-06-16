@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import RegistrazioneClienteForm, LoginForm
-from .models import Utente, Auto
+from .forms import RegistrazioneClienteForm, LoginForm, TestDriveForm
+from .models import Utente, Auto, TestDrive
 
 
 def home(request):
@@ -50,6 +50,7 @@ def logout_view(request):
     request.session.flush()
     return redirect("login")
 
+
 def catalogo(request):
     if "utente_id" not in request.session:
         return redirect("login")
@@ -60,14 +61,50 @@ def catalogo(request):
         "auto_list": auto_list
     })
 
+
 def dettaglio_auto(request, auto_id):
     if "utente_id" not in request.session:
         return redirect("login")
 
     auto = get_object_or_404(Auto, id=auto_id)
+    messaggio = request.session.pop("messaggio", None)
 
     return render(
         request,
         "garage/dettaglio_auto.html",
-        {"auto": auto}
+        {
+            "auto": auto,
+            "messaggio": messaggio
+        }
     )
+
+
+def prenota_test_drive(request, auto_id):
+    if "utente_id" not in request.session:
+        return redirect("login")
+
+    auto = get_object_or_404(Auto, id=auto_id)
+    cliente = get_object_or_404(Utente, id=request.session["utente_id"])
+
+    venditore = Utente.objects.filter(ruolo="venditore").first()
+
+    if request.method == "POST":
+        form = TestDriveForm(request.POST)
+
+        if form.is_valid():
+            test_drive = form.save(commit=False)
+            test_drive.auto = auto
+            test_drive.cliente = cliente
+            test_drive.venditore = venditore
+            test_drive.save()
+
+            request.session["messaggio"] = "Prenotazione test drive effettuata con successo."
+
+            return redirect("dettaglio_auto", auto_id=auto.id)
+    else:
+        form = TestDriveForm()
+
+    return render(request, "garage/prenota_test_drive.html", {
+        "form": form,
+        "auto": auto
+    })

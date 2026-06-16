@@ -8,4 +8,5 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("catalogo/", views.catalogo, name="catalogo"),
     path("catalogo/<int:auto_id>/", views.dettaglio_auto, name="dettaglio_auto"),
+    path("catalogo/<int:auto_id>/prenota-test-drive/", views.prenota_test_drive, name="prenota_test_drive"),
 ]

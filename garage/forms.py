@@ -1,5 +1,6 @@
 from django import forms
 from .models import Utente
+from .models import TestDrive
 
 
 class RegistrazioneClienteForm(forms.ModelForm):
@@ -20,3 +21,12 @@ class RegistrazioneClienteForm(forms.ModelForm):
 class LoginForm(forms.Form):
     email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput)
+
+
+class TestDriveForm(forms.ModelForm):
+    class Meta:
+        model = TestDrive
+        fields = ["data_test_drive"]
+        widgets = {
+            "data_test_drive": forms.DateInput(attrs={"type": "date"})
+        }
