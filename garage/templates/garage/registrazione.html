@@ -1,0 +1,26 @@
+{% extends 'garage/base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Registrazione Cliente</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-success">
+        Registrati
+    </button>
+</form>
+
+<hr>
+
+<p>
+    Hai già un account?
+    <a href="{% url 'login' %}">
+        Vai al login
+    </a>
+</p>
+
+{% endblock %}
