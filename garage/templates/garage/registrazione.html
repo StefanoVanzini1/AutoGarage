@@ -2,25 +2,45 @@
 
 {% block content %}
 
-<h2 class="mb-4">Registrazione Cliente</h2>
+<div class="row justify-content-center mt-4">
 
-<form method="post">
-    {% csrf_token %}
+    <div class="col-md-8 col-lg-7">
 
-    {{ form.as_p }}
+        <div class="card shadow-sm">
 
-    <button type="submit" class="btn btn-success">
-        Registrati
-    </button>
-</form>
+            <div class="card-body p-4">
 
-<hr>
+                <h2 class="text-center mb-4">
+                    Registrazione Cliente
+                </h2>
 
-<p>
-    Hai già un account?
-    <a href="{% url 'login' %}">
-        Vai al login
-    </a>
-</p>
+                <form method="post">
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">
+                            Registrati
+                        </button>
+                    </div>
+                </form>
+
+                <hr>
+
+                <p class="text-center mb-0">
+                    Hai già un account?
+                    <a href="{% url 'login' %}">
+                        Vai al login
+                    </a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

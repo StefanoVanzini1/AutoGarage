@@ -89,3 +89,19 @@ h2, h3, h4 {
 .dashboard-item p {
     margin-bottom: 6px;
 }
+
+form input,
+form select,
+form textarea {
+    border-radius: 10px !important;
+}
+
+form input {
+    width: 100%;
+    padding: 10px 12px;
+}
+
+.test-drive-form input {
+    width: 260px;
+    max-width: 100%;
+}

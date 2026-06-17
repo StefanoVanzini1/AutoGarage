@@ -2,9 +2,12 @@
 
 {% block content %}
 
-<h2 class="mb-4">
-    Prenota test drive
-</h2>
+<div class="hero-section mb-4">
+    <h1>Prenota test drive</h1>
+    <p>
+        Scegli una data per provare il veicolo selezionato.
+    </p>
+</div>
 
 <div class="card mb-4">
     <div class="card-body">
@@ -17,18 +20,24 @@
     </div>
 </div>
 
-<form method="post">
-    {% csrf_token %}
+<div class="card">
+    <div class="card-body">
 
-    {{ form.as_p }}
+        <form method="post" class="test-drive-form">
+            {% csrf_token %}
 
-    <button type="submit" class="btn btn-success">
-        Conferma prenotazione
-    </button>
+            {{ form.as_p }}
 
-    <a href="{% url 'dettaglio_auto' auto.id %}" class="btn btn-secondary">
-        Annulla
-    </a>
-</form>
+            <button type="submit" class="btn btn-success">
+                Conferma prenotazione
+            </button>
+
+            <a href="{% url 'dettaglio_auto' auto.id %}" class="btn btn-secondary">
+                Annulla
+            </a>
+        </form>
+
+    </div>
+</div>
 
 {% endblock %}
