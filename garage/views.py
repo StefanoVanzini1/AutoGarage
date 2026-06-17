@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.cache import cache
 from .forms import RegistrazioneClienteForm, LoginForm, TestDriveForm
 from .models import Utente, Auto, TestDrive, Intervento, Vendita, Noleggio
 
@@ -29,24 +30,42 @@ def login_view(request):
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
 
-            try:
-                utente = Utente.objects.get(email=email, password=password)
+            failed_key = f"failed_login_{email}"
+            block_key = f"blocked_login_{email}"
 
-                request.session["utente_id"] = utente.id
-                request.session["utente_nome"] = utente.nome
-                request.session["utente_ruolo"] = utente.ruolo
+            if cache.get(block_key):
+                errore = "Troppi tentativi falliti. Riprova tra 2 minuti."
+            else:
+                try:
+                    utente = Utente.objects.get(email=email, password=password)
 
-                if utente.ruolo == "cliente":
-                    return redirect("catalogo")
+                    cache.delete(failed_key)
+                    cache.delete(block_key)
 
-                if utente.ruolo == "venditore":
-                    return redirect("dashboard_venditore")
+                    request.session["utente_id"] = utente.id
+                    request.session["utente_nome"] = utente.nome
+                    request.session["utente_ruolo"] = utente.ruolo
 
-                if utente.ruolo == "meccanico":
-                    return redirect("dashboard_meccanico")
+                    if utente.ruolo == "cliente":
+                        return redirect("catalogo")
 
-            except Utente.DoesNotExist:
-                errore = "Email o password non corrette."
+                    if utente.ruolo == "venditore":
+                        return redirect("dashboard_venditore")
+
+                    if utente.ruolo == "meccanico":
+                        return redirect("dashboard_meccanico")
+
+                except Utente.DoesNotExist:
+                    failed_attempts = cache.get(failed_key, 0) + 1
+
+                    if failed_attempts >= 3:
+                        cache.set(block_key, True, timeout=120)
+                        cache.delete(failed_key)
+                        errore = "Hai effettuato 3 tentativi errati. Account bloccato per 2 minuti."
+                    else:
+                        cache.set(failed_key, failed_attempts, timeout=120)
+                        tentativi_rimasti = 3 - failed_attempts
+                        errore = f"Email o password non corrette. Tentativi rimasti: {tentativi_rimasti}."
     else:
         form = LoginForm()
 
@@ -157,6 +176,7 @@ def dashboard_venditore(request):
             "noleggi": noleggi
         }
     )
+
 
 def dashboard_meccanico(request):
     if "utente_id" not in request.session:
