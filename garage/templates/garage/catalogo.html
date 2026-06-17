@@ -9,6 +9,38 @@
     </p>
 </div>
 
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+
+            <div class="col-md-8">
+                <label for="marca" class="form-label">
+                    Cerca per marca
+                </label>
+                <input
+                    type="text"
+                    id="marca"
+                    name="marca"
+                    class="form-control"
+                    placeholder="Esempio: Audi, BMW, Alfa Romeo"
+                    value="{{ marca }}"
+                >
+            </div>
+
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">
+                    Cerca
+                </button>
+
+                <a href="{% url 'catalogo' %}" class="btn btn-secondary">
+                    Mostra tutto
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
 <div class="row">
 
     {% for auto in auto_list %}
@@ -53,7 +85,9 @@
             </div>
         </div>
     {% empty %}
-        <p>Nessuna auto presente nel catalogo.</p>
+        <div class="alert alert-warning">
+            Nessuna auto trovata per la marca cercata.
+        </div>
     {% endfor %}
 
 </div>

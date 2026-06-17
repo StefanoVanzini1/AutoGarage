@@ -62,10 +62,16 @@ def catalogo(request):
     if "utente_id" not in request.session:
         return redirect("login")
 
+    marca = request.GET.get("marca", "")
+
     auto_list = Auto.objects.all().order_by("marca", "modello")
 
+    if marca:
+        auto_list = auto_list.filter(marca__icontains=marca)
+
     return render(request, "garage/catalogo.html", {
-        "auto_list": auto_list
+        "auto_list": auto_list,
+        "marca": marca
     })
 
 
