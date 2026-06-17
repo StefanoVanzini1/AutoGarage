@@ -2,14 +2,21 @@
 
 {% block content %}
 
-<h2 class="mb-4">Dashboard Meccanico</h2>
+<div class="hero-section mb-4">
+    <h1>Dashboard Meccanico</h1>
+    <p>
+        Elenco degli interventi assegnati e delle attività di officina.
+    </p>
+</div>
+
+<h4 class="section-title">Interventi assegnati</h4>
 
 <div class="card">
     <div class="card-body">
 
         {% for intervento in interventi %}
 
-            <div class="border-bottom mb-3 pb-3">
+            <div class="dashboard-item">
 
                 <h5>
                     {{ intervento.auto.marca }} {{ intervento.auto.modello }}

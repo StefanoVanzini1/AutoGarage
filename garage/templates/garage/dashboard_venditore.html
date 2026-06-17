@@ -2,14 +2,19 @@
 
 {% block content %}
 
-<h2 class="mb-4">Dashboard Venditore</h2>
+<div class="hero-section mb-4">
+    <h1>Dashboard Venditore</h1>
+    <p>
+        Riepilogo dei test drive, delle vendite e dei noleggi gestiti.
+    </p>
+</div>
 
-<h4 class="mt-4 mb-3">Test drive gestiti</h4>
+<h4 class="section-title">Test drive gestiti</h4>
 <div class="card mb-4">
     <div class="card-body">
 
         {% for td in test_drive %}
-            <div class="border-bottom mb-3 pb-3">
+            <div class="dashboard-item">
                 <h5>{{ td.auto.marca }} {{ td.auto.modello }}</h5>
                 <p><strong>Cliente:</strong> {{ td.cliente.nome }} {{ td.cliente.cognome }}</p>
                 <p><strong>Data test drive:</strong> {{ td.data_test_drive }}</p>
@@ -21,12 +26,12 @@
     </div>
 </div>
 
-<h4 class="mt-4 mb-3">Vendite gestite</h4>
+<h4 class="section-title">Vendite gestite</h4>
 <div class="card mb-4">
     <div class="card-body">
 
         {% for vendita in vendite %}
-            <div class="border-bottom mb-3 pb-3">
+            <div class="dashboard-item">
                 <h5>{{ vendita.auto.marca }} {{ vendita.auto.modello }}</h5>
                 <p><strong>Cliente:</strong> {{ vendita.cliente.nome }} {{ vendita.cliente.cognome }}</p>
                 <p><strong>Data vendita:</strong> {{ vendita.data_vendita }}</p>
@@ -39,12 +44,12 @@
     </div>
 </div>
 
-<h4 class="mt-4 mb-3">Noleggi gestiti</h4>
+<h4 class="section-title">Noleggi gestiti</h4>
 <div class="card mb-4">
     <div class="card-body">
 
         {% for noleggio in noleggi %}
-            <div class="border-bottom mb-3 pb-3">
+            <div class="dashboard-item">
                 <h5>{{ noleggio.auto.marca }} {{ noleggio.auto.modello }}</h5>
                 <p><strong>Cliente:</strong> {{ noleggio.cliente.nome }} {{ noleggio.cliente.cognome }}</p>
                 <p><strong>Periodo:</strong> {{ noleggio.data_inizio }} - {{ noleggio.data_fine }}</p>

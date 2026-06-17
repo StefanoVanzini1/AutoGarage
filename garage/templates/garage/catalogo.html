@@ -2,8 +2,11 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Catalogo Auto</h2>
+<div class="hero-section mb-4">
+    <h1>Catalogo AutoGarage</h1>
+    <p>
+        Esplora le auto presenti nelle nostre sedi e visualizza le informazioni principali di ogni veicolo.
+    </p>
 </div>
 
 <div class="row">
@@ -11,6 +14,10 @@
     {% for auto in auto_list %}
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
+
+                <div class="card-header-auto">
+                    {{ auto.marca }}
+                </div>
 
                 <div class="card-body">
                     <h5 class="card-title">
@@ -27,11 +34,11 @@
 
                     {% if auto.tipo_auto == "nuova" %}
                         <span class="badge bg-success">
-                            {{ auto.get_tipo_auto_display }}
+                            Nuova
                         </span>
                     {% else %}
                         <span class="badge bg-warning text-dark">
-                            {{ auto.get_tipo_auto_display }}
+                            Usata
                         </span>
                     {% endif %}
 
