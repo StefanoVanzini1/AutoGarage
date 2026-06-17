@@ -1,0 +1,60 @@
+{% extends 'garage/base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Dashboard Venditore</h2>
+
+<h4 class="mt-4 mb-3">Test drive gestiti</h4>
+<div class="card mb-4">
+    <div class="card-body">
+
+        {% for td in test_drive %}
+            <div class="border-bottom mb-3 pb-3">
+                <h5>{{ td.auto.marca }} {{ td.auto.modello }}</h5>
+                <p><strong>Cliente:</strong> {{ td.cliente.nome }} {{ td.cliente.cognome }}</p>
+                <p><strong>Data test drive:</strong> {{ td.data_test_drive }}</p>
+            </div>
+        {% empty %}
+            <p>Nessun test drive assegnato.</p>
+        {% endfor %}
+
+    </div>
+</div>
+
+<h4 class="mt-4 mb-3">Vendite gestite</h4>
+<div class="card mb-4">
+    <div class="card-body">
+
+        {% for vendita in vendite %}
+            <div class="border-bottom mb-3 pb-3">
+                <h5>{{ vendita.auto.marca }} {{ vendita.auto.modello }}</h5>
+                <p><strong>Cliente:</strong> {{ vendita.cliente.nome }} {{ vendita.cliente.cognome }}</p>
+                <p><strong>Data vendita:</strong> {{ vendita.data_vendita }}</p>
+                <p><strong>Prezzo:</strong> € {{ vendita.auto.prezzo }}</p>
+            </div>
+        {% empty %}
+            <p>Nessuna vendita assegnata.</p>
+        {% endfor %}
+
+    </div>
+</div>
+
+<h4 class="mt-4 mb-3">Noleggi gestiti</h4>
+<div class="card mb-4">
+    <div class="card-body">
+
+        {% for noleggio in noleggi %}
+            <div class="border-bottom mb-3 pb-3">
+                <h5>{{ noleggio.auto.marca }} {{ noleggio.auto.modello }}</h5>
+                <p><strong>Cliente:</strong> {{ noleggio.cliente.nome }} {{ noleggio.cliente.cognome }}</p>
+                <p><strong>Periodo:</strong> {{ noleggio.data_inizio }} - {{ noleggio.data_fine }}</p>
+                <p><strong>Costo totale:</strong> € {{ noleggio.costo_totale }}</p>
+            </div>
+        {% empty %}
+            <p>Nessun noleggio assegnato.</p>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}

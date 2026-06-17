@@ -14,10 +14,16 @@
         <a class="navbar-brand" href="#">AutoGarage</a>
 
         {% if request.session.utente_nome %}
-            <span class="text-white">
-                Benvenuto {{ request.session.utente_nome }}
-            </span>
-        {% endif %}
+    <div class="d-flex align-items-center gap-3">
+        <span class="text-white">
+            Benvenuto {{ request.session.utente_nome }}
+        </span>
+
+        <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
+            Logout
+        </a>
+    </div>
+{% endif %}
     </div>
 </nav>
 

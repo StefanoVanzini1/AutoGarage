@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RegistrazioneClienteForm, LoginForm, TestDriveForm
-from .models import Utente, Auto, TestDrive, Intervento
+from .models import Utente, Auto, TestDrive, Intervento, Vendita, Noleggio
 
 
 def home(request):
@@ -134,14 +134,23 @@ def dashboard_venditore(request):
         venditore=venditore
     ).order_by("-data_test_drive")
 
+    vendite = Vendita.objects.filter(
+        venditore=venditore
+    ).order_by("-data_vendita")
+
+    noleggi = Noleggio.objects.filter(
+        venditore=venditore
+    ).order_by("-data_inizio")
+
     return render(
         request,
         "garage/dashboard_venditore.html",
         {
-            "test_drive": test_drive
+            "test_drive": test_drive,
+            "vendite": vendite,
+            "noleggi": noleggi
         }
     )
-
 
 def dashboard_meccanico(request):
     if "utente_id" not in request.session:
