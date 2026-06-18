@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Auto',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('marca', models.CharField(max_length=100)),
                 ('modello', models.CharField(max_length=100)),
                 ('anno', models.IntegerField()),
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Fornitore',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('nome', models.CharField(max_length=100)),
                 ('partita_iva', models.CharField(max_length=20, unique=True)),
                 ('indirizzo', models.CharField(max_length=200)),
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Sede',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('nome', models.CharField(max_length=100, unique=True)),
                 ('indirizzo', models.CharField(max_length=200)),
                 ('citta', models.CharField(max_length=100)),
@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Utente',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('nome', models.CharField(max_length=100)),
                 ('cognome', models.CharField(max_length=100)),
                 ('email', models.EmailField(max_length=254, unique=True)),
@@ -84,7 +84,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Fornitura',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('data_fornitura', models.DateField()),
                 ('prezzo_acquisto', models.DecimalField(decimal_places=2, max_digits=10, validators=[django.core.validators.MinValueValidator(0.01)])),
                 ('auto', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='fornitura', to='garage.auto')),
@@ -104,7 +104,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TestDrive',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('data_test_drive', models.DateField()),
                 ('auto', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='test_drive', to='garage.auto')),
                 ('cliente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='test_drive_cliente', to='garage.utente')),
@@ -118,7 +118,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Noleggio',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('data_inizio', models.DateField()),
                 ('data_fine', models.DateField()),
                 ('costo_giornaliero', models.DecimalField(decimal_places=2, max_digits=10, validators=[django.core.validators.MinValueValidator(0.01)])),
@@ -135,7 +135,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Intervento',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('data_intervento', models.DateField()),
                 ('tipo_intervento', models.CharField(max_length=100)),
                 ('costo', models.DecimalField(decimal_places=2, max_digits=10, validators=[django.core.validators.MinValueValidator(0)])),
@@ -150,7 +150,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Vendita',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('data_vendita', models.DateField()),
                 ('auto', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, related_name='vendita', to='garage.auto')),
                 ('cliente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='vendite_cliente', to='garage.utente')),
@@ -164,7 +164,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Recensione',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('voto', models.IntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
                 ('commento', models.TextField()),
                 ('auto', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='recensioni', to='garage.auto')),
@@ -179,7 +179,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Impiego',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('sede', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='impieghi', to='garage.sede')),
                 ('dipendente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='impieghi', to='garage.utente')),
             ],
