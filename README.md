@@ -2,8 +2,8 @@
 
 Sistema informativo per la gestione di una concessionaria automobilistica multi-sede con officina interna.
 
-**Corso:** Basi di Dati
-**Anno Accademico:** 2025/2026
+- **Corso:** Basi di Dati
+- **Anno Accademico:** 2025/2026
 
 ---
 
