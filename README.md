@@ -1,10 +1,9 @@
 # AutoGarage
 
-Sistema informativo per la gestione di una concessionaria automobilistica con officina interna.
+Sistema informativo per la gestione di una concessionaria automobilistica multi-sede.
 
 **Corso:** Basi di Dati  
 **Anno Accademico:** 2025/2026  
-**Tecnologie:** Django, MySQL, Bootstrap
 
 ---
 
@@ -26,9 +25,8 @@ L'applicazione implementa le seguenti funzionalità:
 - Visualizzazione del catalogo delle auto
 - Consultazione della scheda dettagliata di ogni veicolo
 - Prenotazione e gestione dei test drive
-- Registrazione delle vendite
 - Gestione degli interventi di officina
-- Inserimento e consultazione delle recensioni
+- Consultazione delle recensioni
 - Gestione degli utenti in base al ruolo (cliente, venditore, meccanico)
 
 ---
@@ -41,25 +39,15 @@ L'applicazione implementa le seguenti funzionalità:
 - HTML5
 - CSS3
 - Bootstrap 5
-- Git
-- GitHub
 
 ---
 
 ## Requisiti
 
-Il progetto è stato testato sui seguenti sistemi operativi:
-
-- Windows 10 / 11
-- Linux
-- macOS
-
-Software richiesto:
-
 - Python 3.12 o superiore
 - MySQL Server 8.0 o superiore
-- pip
-- Git
+- pip, per installare le dipendenze Python
+- Git, per clonare la repository
 
 ---
 
@@ -68,7 +56,7 @@ Software richiesto:
 ### 1. Clonare la repository
 
 ```bash
-git clone https://github.com/NOME-UTENTE/AutoGarage.git
+git clone https://github.com/StefanoVanzini1/AutoGarage.git
 cd AutoGarage
 ```
 
@@ -130,44 +118,27 @@ Una volta avviato il server, aprire il browser all'indirizzo:
 http://127.0.0.1:8000/
 ```
 
-L'applicazione è accessibile da qualsiasi browser moderno, tra cui:
-
-- Google Chrome
-- Mozilla Firefox
-- Microsoft Edge
-- Safari
-
-Da qui sarà possibile:
-
-- effettuare il login;
-- registrare nuovi utenti;
-- consultare il catalogo delle auto;
-- prenotare test drive;
-- gestire vendite e interventi tramite gli account dedicati.
-
----
-
 ## Credenziali di test
 
-### Amministratore
+### Cliente
 
 ```text
-Email: admin@autogarage.it
-Password: ********
+Email: matteo.serra@email.it
+Password: Cliente2026!
 ```
 
 ### Venditore
 
 ```text
-Email: venditore@autogarage.it
-Password: ********
+Email: marco.esposito@autogarage.it
+Password: Venditore2026!
 ```
 
 ### Meccanico
 
 ```text
-Email: meccanico@autogarage.it
-Password: ********
+Email: antonio.russo@autogarage.it
+Password: Meccanico2026!
 ```
 
 ---
@@ -180,32 +151,17 @@ La documentazione completa del progetto è disponibile all'interno della reposit
 - Modello Entità-Relazioni (E-R)
 - Schema logico
 - Implementazione della base di dati
-- Vincoli e trigger
+- Vincoli
 - Funzionalità sviluppate
 - Analisi degli aspetti di sicurezza
-- Test effettuati
-
----
-
-## Struttura del progetto
-
-```text
-AutoGarage/
-│
-├── garage/
-├── templates/
-├── static/
-├── media/
-├── documentazione/
-├── manage.py
-├── requirements.txt
-└── README.md
-```
 
 ---
 
 ## Autori
 
-Progetto realizzato per il corso di **Basi di Dati**.
+Progetto realizzato da:
 
-Anno Accademico 2025/2026.
+- Stefano Vanzini
+
+Corso di Basi di Dati
+Anno Accademico 2025/2026
