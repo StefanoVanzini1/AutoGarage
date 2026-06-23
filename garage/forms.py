@@ -1,5 +1,6 @@
 import re
 from django import forms
+from django.contrib.auth.hashers import make_password
 from .models import Utente, TestDrive
 
 
@@ -67,9 +68,12 @@ class RegistrazioneClienteForm(forms.ModelForm):
 
     def save(self, commit=True):
         utente = super().save(commit=False)
+        utente.password = make_password(self.cleaned_data["password"])
         utente.ruolo = "cliente"
+
         if commit:
             utente.save()
+
         return utente
 
 

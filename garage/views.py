@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.cache import cache
 from .forms import RegistrazioneClienteForm, LoginForm, TestDriveForm
 from .models import Utente, Auto, TestDrive, Intervento, Vendita, Noleggio
+from django.contrib.auth import authenticate
 
 
 def home(request):
@@ -37,7 +38,10 @@ def login_view(request):
                 errore = "Troppi tentativi falliti. Riprova tra 2 minuti."
             else:
                 try:
-                    utente = Utente.objects.get(email=email, password=password)
+                    utente = authenticate(request, username=email, password=password)
+
+                    if utente is None:
+                        raise Utente.DoesNotExist
 
                     cache.delete(failed_key)
                     cache.delete(block_key)
